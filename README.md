@@ -26,7 +26,7 @@ A Spring Boot application for managing message queues and partner communications
 - JUnit test coverage for critical components
 
 ## Technology Stack
-- Java 17
+- Java 21
 - Spring Boot
 - Spring Data JPA
 - PostgreSQL
@@ -34,8 +34,42 @@ A Spring Boot application for managing message queues and partner communications
 - Log4j2
 - JUnit 5
 - Bootstrap 5 (for web interface)
+- Docker & Docker Compose
 
 ## Getting Started
+
+### Prerequisites
+- Docker and Docker Compose installed
+- Git for cloning the repository
+
+### Running with Docker
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd <repository-directory>
+```
+
+2. Build and start all services:
+```bash
+docker-compose up --build
+```
+
+This will start:
+- The Spring Boot application on port 8080
+- PostgreSQL database on port 5432
+- IBM MQ server on ports 1414 and 9443
+
+3. Access the application:
+- Web interface: http://localhost:8080
+- API endpoints: http://localhost:8080/api
+
+4. To stop the services:
+```bash
+docker-compose down
+```
+
+### Manual Setup (Alternative)
 
 1. Clone the repository
 2. Configure your database settings in `application.properties`

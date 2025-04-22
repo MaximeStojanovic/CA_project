@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - ibmmq
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/ca_project
+      - SPRING_DATASOURCE_USERNAME=MaxAdmin
+      - SPRING_DATASOURCE_PASSWORD=MaxAdmin
+      - IBM_MQ_QUEUE_MANAGER=QM1
+      - IBM_MQ_CHANNEL=DEV.APP.SVRCONN
+      - IBM_MQ_CONN_NAME=ibmmq(1414)
+      - IBM_MQ_USER=app
+      - IBM_MQ_PASSWORD=passw0rd
+      - IBM_MQ_QUEUE=DEV.QUEUE.1
+
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=ca_project
+      - POSTGRES_USER=MaxAdmin
+      - POSTGRES_PASSWORD=MaxAdmin
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  ibmmq:
+    image: ibm-mqadvanced-server-dev:9.4.2.0-arm64
+    container_name: QM1
+    ports:
+      - "1414:1414"
+      - "9443:9443"
+    environment:
+      - LICENSE=accept
+      - MQ_QMGR_NAME=QM1
+      - MQ_APP_USER=app
+      - MQ_APP_PASSWORD=passw0rd
+      - MQ_ADMIN_USER=admin
+      - MQ_ADMIN_PASSWORD=passw0rd
+    volumes:
+      - qm1data:/mnt/mqm
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  qm1data: 
