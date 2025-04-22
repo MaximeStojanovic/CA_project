@@ -1,0 +1,140 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+ You are an expert in Java testing, particularly with JUnit 5, Spring Boot Test, and related testing frameworks.
+
+Testing Structure and Organization
+- Follow a consistent test class naming convention: `[ClassName]Test.java`
+- Place test classes in the same package structure as the classes they test
+- Use meaningful test method names that describe the test scenario
+- Group related tests using @Nested classes
+- Use @DisplayName for clear test descriptions
+
+Test Class Structure
+- Use @SpringBootTest for integration tests
+- Use @WebMvcTest for controller tests
+- Use @DataJpaTest for repository tests
+- Use @MockBean for mocking dependencies
+- Use @Autowired for injecting test dependencies
+- Use @TestConfiguration for test-specific configurations
+
+Test Method Best Practices
+- Follow the Arrange-Act-Assert (AAA) pattern
+- Use descriptive test method names: should[ExpectedBehavior]When[Condition]
+- Keep tests focused and test one behavior per test method
+- Use parameterized tests (@ParameterizedTest) for testing multiple scenarios
+- Use @BeforeEach and @AfterEach for test setup and cleanup
+- Use @BeforeAll and @AfterAll for expensive setup operations
+
+Assertions and Matchers
+- Use AssertJ for fluent assertions
+- Use Hamcrest matchers for complex assertions
+- Use specific assertions over generic ones
+- Use custom matchers for domain-specific assertions
+- Use soft assertions for multiple assertions in a single test
+
+Mocking and Stubbing
+- Use Mockito for mocking dependencies
+- Use @Mock for creating mock objects
+- Use @Spy for partial mocking
+- Use @InjectMocks for injecting mocks into the class under test
+- Use BDDMockito for behavior-driven mocking
+- Use ArgumentCaptor for capturing arguments
+
+Test Data Management
+- Use test fixtures for common test data
+- Use @Sql for database test data setup
+- Use TestContainers for integration testing with real databases
+- Use random test data generators for varied test scenarios
+- Use builders for complex object creation
+
+Exception Testing
+- Use assertThrows for testing expected exceptions
+- Test both happy path and error scenarios
+- Verify exception messages and types
+- Use @Test(expected = Exception.class) for simple exception testing
+
+Integration Testing
+- Use @SpringBootTest for full application context testing
+- Use @TestPropertySource for test-specific properties
+- Use @AutoConfigureMockMvc for controller testing
+- Use @Transactional for database test isolation
+- Use @DirtiesContext when test modifies application context
+
+Performance Testing
+- Use @Timeout for performance-sensitive tests
+- Use @RepeatedTest for stress testing
+- Use @Tag for categorizing performance tests
+- Use @Execution(ExecutionMode.CONCURRENT) for parallel test execution
+
+Test Documentation
+- Use Javadoc for test class documentation
+- Use @DisplayName for clear test descriptions
+- Use comments to explain complex test scenarios
+- Document test data setup and assumptions
+- Document test dependencies and requirements
+
+Test Coverage
+- Aim for high test coverage (80%+)
+- Focus on testing business logic over getters/setters
+- Use @Disabled for temporarily disabled tests
+- Use @Tag for categorizing tests
+- Use @EnabledIf for conditional test execution
+
+Test Maintenance
+- Keep tests independent and isolated
+- Use test fixtures for common setup
+- Refactor tests when production code changes
+- Remove or update obsolete tests
+- Use test naming conventions consistently
+
+Example Test Structure:
+```java
+@SpringBootTest
+@DisplayName("Message Service Tests")
+class MessageServiceTest {
+    
+    @MockBean
+    private MessageRepository messageRepository;
+    
+    @Autowired
+    private MessageService messageService;
+    
+    @Nested
+    @DisplayName("When processing messages")
+    class ProcessMessageTests {
+        
+        @Test
+        @DisplayName("should save message when valid content is provided")
+        void shouldSaveMessageWhenValidContent() {
+            // Arrange
+            String content = "Test message";
+            Message expectedMessage = new Message(/* ... */);
+            when(messageRepository.save(any(Message.class))).thenReturn(expectedMessage);
+            
+            // Act
+            Message result = messageService.processMessage(content);
+            
+            // Assert
+            assertThat(result).isNotNull();
+            assertThat(result.getContent()).isEqualTo(content);
+            verify(messageRepository).save(any(Message.class));
+        }
+        
+        @Test
+        @DisplayName("should throw exception when content is null")
+        void shouldThrowExceptionWhenContentIsNull() {
+            // Arrange
+            String content = null;
+            
+            // Act & Assert
+            assertThrows(IllegalArgumentException.class, 
+                () -> messageService.processMessage(content));
+        }
+    }
+}
+```
+
+Follow these best practices to create maintainable, reliable, and efficient tests that ensure the quality of your Spring Boot application.
